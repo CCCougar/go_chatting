@@ -66,7 +66,8 @@ func (this *User) MessageHandler(msg string) {
 		this.server.mapLock.Unlock()
 	} else if len(msg) > 17 && msg[:17] == "change my name to" {
 		newName := strings.Fields(msg)[4]
-		// fmt.Println(newName)
+		// fmt.Printf("%v", strings.Fields(msg))
+		// fmt.Printf("%v", msg)
 
 		// whether the name is being used
 		_, ok := this.server.OnlineMap[newName]
