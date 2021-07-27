@@ -58,12 +58,14 @@ func (this *User) UserOffline() {
 func (this *User) MessageHandler(msg string) {
 	// Check which users are online
 	if msg == "who is online" {
+
 		this.server.mapLock.Lock()
 		for _, user := range this.server.OnlineMap {
 			onlineMsg := "[" + user.Addr + "]" + user.Name + " ***is online***\n"
 			this.SendToUser(onlineMsg)
 		}
 		this.server.mapLock.Unlock()
+
 	} else if len(msg) > 17 && msg[:17] == "change my name to" {
 		newName := strings.Fields(msg)[4]
 		// fmt.Printf("%v", strings.Fields(msg))
@@ -72,13 +74,14 @@ func (this *User) MessageHandler(msg string) {
 		// whether the name is being used
 		_, ok := this.server.OnlineMap[newName]
 		if ok == false {
+
 			this.server.mapLock.Lock()
 			delete(this.server.OnlineMap, this.Name)
 			this.server.OnlineMap[newName] = this
 			this.server.mapLock.Unlock()
 
 			this.Name = newName
-			this.SendToUser("You've change your name to " + newName + "\n")
+			this.SendToUser("You've changed your name to " + newName + "\n")
 		} else {
 			nameExistMsg := newName + "exists \n"
 			this.SendToUser(nameExistMsg)

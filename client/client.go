@@ -16,8 +16,8 @@ type Client struct {
 	flag       int
 }
 
+// create a client object
 func NewClient(serverIp string, serverPort int) *Client {
-	// create object
 	client := &Client{
 		ServerIp:   serverIp,
 		ServerPort: serverPort,
@@ -65,6 +65,7 @@ func (client *Client) menu() bool {
 }
 
 func (client *Client) Run() {
+	client.ChangeName()
 	for client.flag != 0 {
 		for client.menu() != true {
 		}
@@ -152,7 +153,7 @@ func (client *Client) PrivateChatting() {
 }
 
 func (client *Client) ChangeName() {
-	fmt.Println("Please input your newname:")
+	fmt.Println("Please give yourself a name:")
 	fmt.Scanln(&client.Name)
 
 	client.conn.Write([]byte("change my name to " + client.Name + "\n"))

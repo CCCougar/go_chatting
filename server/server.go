@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -33,6 +34,7 @@ func (this *Server) BroadCast(user *User, msg string) {
 	this.Message <- message
 }
 
+// connection handler
 func (this *Server) Handler(conn net.Conn) {
 	// fmt.Println("connected")
 	// conn.Write([]byte("You connected to the server"))
@@ -47,6 +49,7 @@ func (this *Server) Handler(conn net.Conn) {
 		buffer := make([]byte, 4096)
 		for {
 			n, err := conn.Read(buffer)
+			log.Println("conn.Read", string(buffer))
 
 			if n == 0 {
 				user.UserOffline()
@@ -58,6 +61,7 @@ func (this *Server) Handler(conn net.Conn) {
 				return
 			}
 			msg := string(buffer[:n-1])
+			// msg := string(buffer)
 
 			user.MessageHandler(msg)
 
@@ -69,6 +73,7 @@ func (this *Server) Handler(conn net.Conn) {
 		select {
 		case <-isAlive:
 
+		// After 10 minutes without reset, there will be some content in the channel that time.After returned which will trigger case <-
 		case <-time.After(time.Minute * 10):
 			user.SendToUser("No activity for more than 10 minutes, you've been removed\n")
 			user.UserOffline()
@@ -84,14 +89,18 @@ func (this *Server) Handler(conn net.Conn) {
 func (this *Server) ListenMessage() {
 	for {
 		Message := <-this.Message
+
+		// Boradcast the content in this.Message chan
 		this.mapLock.Lock()
 		for _, user := range this.OnlineMap {
 			user.C <- Message
 		}
 		this.mapLock.Unlock()
 	}
+
 }
 
+// Boot the server, listen and serve
 func (this *Server) Start() {
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", this.Ip, this.Port))
 	if err != nil {
@@ -101,6 +110,7 @@ func (this *Server) Start() {
 
 	defer listener.Close()
 
+	// Keep listening this.Message chan
 	go this.ListenMessage()
 
 	for {
