@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"sync"
 	"time"
@@ -49,7 +48,7 @@ func (this *Server) Handler(conn net.Conn) {
 		buffer := make([]byte, 4096)
 		for {
 			n, err := conn.Read(buffer)
-			log.Println("conn.Read", string(buffer))
+			// log.Printf("conn.Read: %X", buffer)
 
 			if n == 0 {
 				user.UserOffline()
@@ -62,7 +61,9 @@ func (this *Server) Handler(conn net.Conn) {
 			}
 			msg := string(buffer[:n-1])
 			// msg := string(buffer)
+			// log.Printf("msg: %X", msg)
 
+			// time.Sleep(time.Second * 1)
 			user.MessageHandler(msg)
 
 			isAlive <- true

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io"
@@ -88,17 +89,19 @@ func (client *Client) Run() {
 }
 
 func (client *Client) PublicChatting() {
-	var clientMsg string
+	// var clientMsg string
 
-	fmt.Println("Please input your message(WITH NO **SPACE** IN YOUR MESSAGE, input \"exit\" to quit)")
-	fmt.Scanln(&clientMsg)
+	// fmt.Println("Please input your message(WITH NO **SPACE** IN YOUR MESSAGE, input \"exit\" to quit)")
+	// fmt.Scanln(&clientMsg)
+	fmt.Print("Please input your message(input \"exit\" to quit) >>> ")
+	inputReader := bufio.NewReader(os.Stdin)
+	input, _ := inputReader.ReadString('\n')
+	// fmt.Println("clientMsg: " + input)
 
-	// fmt.Println("clientMsg: " + clientMsg)
-
-	for clientMsg != "exit" {
-		if len(clientMsg) > 0 {
-			// fmt.Println("clientMsg: " + clientMsg)
-			sendMsg := clientMsg + "\n"
+	for input != "exit\x0a" {
+		if len(input) > 0 {
+			// sendMsg := clientMsg + "\n"
+			sendMsg := input + "\n"
 			// fmt.Println("sendMsg:" + sendMsg)
 			_, err := client.conn.Write([]byte(sendMsg))
 
@@ -108,11 +111,14 @@ func (client *Client) PublicChatting() {
 			}
 		}
 
-		clientMsg = ""
+		// clientMsg = ""
+		input = ""
 
-		fmt.Println("Please input your message(end by input \"exit\")")
-		fmt.Scanln(&clientMsg)
-		// fmt.Println("clientMsg: " + clientMsg)
+		fmt.Println("Please input your message(input \"exit\" to quit) >>> ")
+		// fmt.Scanln(&clientMsg)
+		input, _ = inputReader.ReadString('\n')
+		// fmt.Printf("input: %x", input)
+		// time.Sleep(time.Millisecond * 100)
 	}
 }
 
