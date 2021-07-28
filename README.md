@@ -14,3 +14,9 @@ A golang learning project
 - Show online users
 - Change username
 - Timeout check
+
+Due to the output of client is messed up by the response from server, considering redirect the response from server to a log file named `Response_from_server.txt` (Please using software which will **Live Update** `Response_from_server.txt` to open it).
+
+## Screenshot
+
+![go_chatting.png](https://i.loli.net/2021/07/28/mxERL51GvofFYBy.png)

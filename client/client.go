@@ -5,8 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"os"
+	"time"
 )
 
 type Client struct {
@@ -114,7 +116,7 @@ func (client *Client) PublicChatting() {
 		// clientMsg = ""
 		input = ""
 
-		fmt.Println("Please input your message(input \"exit\" to quit) >>> ")
+		fmt.Print("Please input your message(input \"exit\" to quit) >>> ")
 		// fmt.Scanln(&clientMsg)
 		input, _ = inputReader.ReadString('\n')
 		// fmt.Printf("input: %x", input)
@@ -167,7 +169,19 @@ func (client *Client) ChangeName() {
 
 // Deal the message returned from server
 func (this *Client) Dealresponse() {
-	io.Copy(os.Stdout, this.conn) // Permanent block and copy&update
+	file, err := os.OpenFile("Response_from_server.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0755)
+	// f, err := os.OpenFile("notes.txt", os.O_RDWR|os.O_CREATE, 0755)
+	file.Write([]byte("------------" + time.Now().Local().Format("Mon Jan 2 15:04:05 -0700 MST 2006") + "--------------\n"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err != nil {
+		log.Printf("os.Create error: %s", err)
+	}
+
+	defer file.Close()
+
+	io.Copy(file, this.conn) // Permanent block and copy&update
 }
 
 func main() {
